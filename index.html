@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JudicIA · Prototipo de alta resolución</title>
+<style>
+:root{
+  --navy:#1F3A5F; --navy2:#2B4C7E; --ink:#1d2433; --muted:#5d6779; --line:#dde3ec;
+  --bg:#f4f6fa; --card:#ffffff; --ok:#1f8a5b; --okbg:#e6f5ee; --warn:#b7791f; --warnbg:#fdf3e1;
+  --bad:#c0392b; --badbg:#fbe9e7; --accent:#3d7be0; --accentbg:#e8f0fd;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Source Sans 3","Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15px;line-height:1.45}
+button{font:inherit;cursor:pointer}
+.app{display:flex;min-height:100vh}
+.side{width:230px;background:var(--navy);color:#fff;padding:18px 12px;flex-shrink:0;align-self:stretch}
+.brand{font-weight:700;font-size:22px;letter-spacing:.3px;padding:0 8px 4px}
+.brand span{color:#8fb6ff}
+.tag{font-size:12px;opacity:.75;padding:0 8px 16px}
+.nav button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;color:#dbe6f7;padding:9px 10px;border-radius:8px;font-size:14px}
+.nav button:hover{background:rgba(255,255,255,.08)}
+.nav button.on{background:#fff;color:var(--navy);font-weight:600}
+.nav .sep{font-size:11px;text-transform:uppercase;letter-spacing:.8px;opacity:.55;padding:14px 10px 4px}
+.main{flex:1;padding:26px 30px 90px;max-width:1080px}
+h1{font-size:24px;margin:0 0 4px}
+h2{font-size:18px;margin:0 0 10px}
+.sub{color:var(--muted);margin:0 0 20px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:8px;padding:9px 16px;font-weight:600}
+.btn:hover{background:var(--navy2)}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+.btn.sm{padding:5px 10px;font-size:13px}
+.pill{display:inline-block;font-size:12px;padding:2px 9px;border-radius:99px;background:var(--accentbg);color:var(--accent);font-weight:600}
+.pill.ok{background:var(--okbg);color:var(--ok)} .pill.warn{background:var(--warnbg);color:var(--warn)} .pill.bad{background:var(--badbg);color:var(--bad)}
+.bar{height:9px;background:#e7ebf2;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.kpi{font-size:26px;font-weight:700}
+.muted{color:var(--muted)} .small{font-size:13px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px 12px;margin:6px 0}
+.opt:hover{border-color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--accentbg)}
+.opt.right{border-color:var(--ok);background:var(--okbg)} .opt.wrong{border-color:var(--bad);background:var(--badbg)}
+.fb{border-radius:8px;padding:10px 12px;margin-top:10px;font-size:14px}
+.fb.ok{background:var(--okbg);color:#14603f} .fb.bad{background:var(--badbg);color:#8a2318} .fb.info{background:var(--accentbg);color:#22489a}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{background:var(--navy);color:#fff;text-align:left;padding:8px 10px;font-weight:600}
+td{border-bottom:1px solid var(--line);padding:8px 10px;vertical-align:top}
+textarea,input[type=text],input[type=email],select{width:100%;font:inherit;border:1px solid var(--line);border-radius:8px;padding:9px 10px;background:#fff}
+textarea{min-height:120px;resize:vertical}
+.cite{border-bottom:2px dotted var(--muted);cursor:pointer;padding:0 2px;border-radius:3px}
+.cite.flag{background:var(--warnbg);border-bottom-color:var(--warn)}
+.cite.good{background:var(--okbg);border-bottom-color:var(--ok)}
+.cite.badc{background:var(--badbg);border-bottom-color:var(--bad)}
+mark.pii{background:#ffd6d1;color:#8a2318;border-radius:3px;padding:0 2px}
+.out{white-space:pre-wrap;background:#fbfcfe;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:14px;min-height:60px}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line)}
+.chk input{margin-top:4px;width:18px;height:18px}
+.login{max-width:420px;margin:7vh auto;background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px}
+.cert{border:6px double var(--navy);border-radius:10px;padding:28px;text-align:center;background:#fff}
+.stars button{background:none;border:0;font-size:28px;color:#c9d1de;padding:0 2px}
+.stars button.on{color:#f0a500}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:9}
+.toast.show{opacity:1}
+.banner{background:var(--warnbg);color:#7a5210;border:1px solid #f1d9a8;border-radius:8px;padding:8px 12px;font-size:13px;margin-bottom:16px}
+.hidden{display:none!important}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
+@media (max-width:820px){
+  .app{flex-direction:column}
+  .side{width:100%;height:auto;position:static;padding:12px}
+  .nav{display:flex;overflow-x:auto;gap:4px}
+  .nav button{white-space:nowrap;width:auto}
+  .nav .sep,.tag{display:none}
+  .main{padding:18px 14px 80px}
+  .g2,.g3{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- F1. Ingreso con correo institucional -->
+<div id="s-login" class="login">
+  <div style="font-size:28px;font-weight:700;color:var(--navy)">Judic<span style="color:var(--accent)">IA</span></div>
+  <p class="muted" style="margin-top:2px">Aprende a usar la IA en tu judicatura, con criterio y sin riesgos.</p>
+  <label class="small muted">Correo institucional de tu universidad</label>
+  <input id="mail" type="email" value="judicante@universidad.edu.co" style="margin:6px 0 12px">
+  <label class="small muted">Universidad con licencia</label>
+  <select id="uni" style="margin:6px 0 16px"><option>Universidad Demo (licencia institucional)</option><option>Acceso individual (plan gratuito)</option></select>
+  <button class="btn" style="width:100%" onclick="go('diag')">Ingresar</button>
+  <p class="small muted" style="margin-top:14px">Prototipo académico. No ingreses datos reales: todos los casos son ficticios.</p>
+</div>
+
+<div id="s-app" class="app hidden">
+  <aside class="side">
+    <div class="brand">Judic<span>IA</span></div>
+    <div class="tag">Alfabetización en IA para judicantes</div>
+    <nav class="nav" id="nav">
+      <div class="sep">Aprender</div>
+      <button data-v="panel">🏠 Mi panel</button>
+      <button data-v="leccion">⏱️ Micro-lección</button>
+      <button data-v="matriz">🧭 Tarea → herramienta</button>
+      <div class="sep">Practicar</div>
+      <button data-v="verif">🔎 Laboratorio de verificación</button>
+      <button data-v="simul">⚖️ Simulador de providencia</button>
+      <button data-v="datos">🛡️ Semáforo de datos</button>
+      <div class="sep">Recursos</div>
+      <button data-v="plantillas">📋 Plantillas de instrucciones</button>
+      <button data-v="checklist">✅ Checklist antes de usar</button>
+      <button data-v="constancia">🎓 Constancia</button>
+      <div class="sep">Otros</div>
+      <button data-v="uni">🏛️ Vista universidad</button>
+      <button data-v="feedback">💬 Tu opinión</button>
+    </nav>
+  </aside>
+  <main class="main">
+    <div class="banner">Prototipo de alta resolución · Entrega 2 EBT · los contenidos, citas y casos son ficticios y no se guardan datos.</div>
+
+    <section id="v-diag" class="view">
+      <h1>Diagnóstico inicial</h1>
+      <p class="sub">3 preguntas para armar tu ruta. Toma menos de 1 minuto.</p>
+      <div class="card" id="diagBox"></div>
+    </section>
+
+    <section id="v-panel" class="view">
+      <h1>Hola, judicante 👋</h1>
+      <p class="sub" id="rutaTxt">Tu ruta: Nivel básico · Enfoque en verificación y uso seguro</p>
+      <div class="grid g3">
+        <div class="card"><div class="muted small">Esta semana</div><div class="kpi"><span id="minSem">25</span> / 60 min</div><div class="bar"><i id="barSem" style="width:42%"></i></div><div class="small muted" style="margin-top:6px">Meta pensada para tu jornada</div></div>
+        <div class="card"><div class="muted small">Progreso de la ruta</div><div class="kpi"><span id="pctRuta">30</span>%</div><div class="bar"><i id="barRuta" style="width:30%"></i></div><div class="small muted" style="margin-top:6px">3 de 10 módulos</div></div>
+        <div class="card"><div class="muted small">Racha</div><div class="kpi">4 días 🔥</div><div class="small muted">Sigue con la lección de hoy</div></div>
+      </div>
+      <h2 style="margin-top:22px">Tu ruta de aprendizaje</h2>
+      <div class="card" id="rutaList"></div>
+    </section>
+
+    <section id="v-leccion" class="view">
+      <div class="row between"><div><h1>Lección 4 · Las alucinaciones y cómo detectarlas</h1><p class="sub">Micro-lección de 12 minutos · Nivel básico</p></div><div class="card" style="padding:8px 14px">⏱️ <span class="timer" id="timer">12:00</span> <button class="btn sm ghost" id="tbtn" onclick="toggleTimer()">Iniciar</button></div></div>
+      <div class="grid g2">
+        <div class="card">
+          <h2>1. Idea clave</h2>
+          <p>Un modelo de lenguaje predice texto plausible; no consulta una base oficial. Por eso puede <b>inventar leyes, sentencias o radicados</b> que suenan reales.</p>
+          <h2>2. Señales de alerta</h2>
+          <ul><li>Números de sentencia con formato raro o corporación equivocada.</li><li>Citas textuales sin fuente verificable.</li><li>Fechas o magistrados que no coinciden.</li></ul>
+          <h2>3. Regla de oro</h2>
+          <p>Toda cita se confirma en la fuente oficial (relatoría o diario oficial) <b>antes</b> de usarla en un proyecto.</p>
+        </div>
+        <div class="card"><h2>Comprueba lo aprendido</h2><div id="quiz"></div></div>
+      </div>
+    </section>
+
+    <section id="v-matriz" class="view">
+      <h1>Matriz tarea → herramienta</h1>
+      <p class="sub">Elige tu tarea y mira qué tipo de herramienta sirve, hasta dónde llega y qué riesgo tiene.</p>
+      <div class="row" id="filtros" style="margin-bottom:12px"></div>
+      <div class="card" style="padding:0;overflow:auto"><table><thead><tr><th>Tarea</th><th>Tipo de herramienta</th><th>Sirve para</th><th>Límite</th><th>Riesgo</th></tr></thead><tbody id="matBody"></tbody></table></div>
+    </section>
+
+    <section id="v-verif" class="view">
+      <h1>Laboratorio de verificación</h1>
+      <p class="sub">Una IA respondió esta consulta de un caso ficticio. Haz clic en cada cita y clasifícala. Luego revisa.</p>
+      <div class="card">
+        <div class="small muted" style="margin-bottom:6px">Consulta: «¿Qué norma da a la SFC funciones jurisdiccionales en asuntos de consumo financiero?»</div>
+        <p id="iaResp" style="line-height:1.9"></p>
+        <div class="row"><button class="btn" onclick="revisarCitas()">Revisar mis respuestas</button><span class="small muted">Clic en una cita: sin marcar → la considero real → la considero inventada</span></div>
+        <div id="citaFb"></div>
+      </div>
+    </section>
+
+    <section id="v-simul" class="view">
+      <h1>Simulador de proyección de providencia</h1>
+      <p class="sub">Caso ficticio. Escribe la instrucción para la IA, genera un borrador simulado y evalúalo con la rúbrica.</p>
+      <div class="grid g2">
+        <div class="card">
+          <h2>Caso ficticio 07</h2>
+          <p class="small">La consumidora <b>Ana Ficticia</b> demanda al <b>Banco Ejemplo S.A.</b> por un cobro de seguro de vida no autorizado en su tarjeta de crédito durante 14 meses ($38.500 mensuales). El banco alega que hubo aceptación telefónica, pero no aporta la grabación.</p>
+          <label class="small muted">Tu instrucción (prompt)</label>
+          <textarea id="prompt">Actúa como sustanciador. Con base en los hechos del caso ficticio 07, redacta la sección de "Consideraciones" de un proyecto de sentencia, en tono formal. Señala qué pruebas faltan y no cites normas que no puedas verificar.</textarea>
+          <div class="row" style="margin-top:10px"><button class="btn" onclick="generar()">Generar borrador simulado</button><button class="btn ghost sm" onclick="go('plantillas')">Ver plantillas</button></div>
+        </div>
+        <div class="card">
+          <h2>Borrador de la IA (simulado)</h2>
+          <div class="out" id="borrador">Aún no has generado un borrador.</div>
+          <h2 style="margin-top:14px">Rúbrica de revisión humana</h2>
+          <div id="rubrica"></div>
+          <div id="rubFb"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="v-datos" class="view">
+      <h1>Semáforo de datos sensibles</h1>
+      <p class="sub">Antes de pegar un texto en una IA, revísalo aquí. Se analiza solo en tu navegador; no se envía a ningún lado.</p>
+      <div class="grid g2">
+        <div class="card">
+          <textarea id="txtDatos">El señor Carlos Ficticio Pérez, identificado con cédula 1.023.456.789, correo carlos.ficticio@correo.com y celular 310 555 1234, presentó demanda contra la entidad por el reporte negativo de la obligación 4567-8899.</textarea>
+          <div class="row" style="margin-top:10px"><button class="btn" onclick="analizar()">Analizar</button><button class="btn ghost" onclick="anonimizar()">Anonimizar</button></div>
+        </div>
+        <div class="card"><div id="semaforo"><span class="pill">Sin analizar</span></div><div class="out" id="datosOut" style="margin-top:10px"></div><p class="small muted">Recuerda: la política de tu entidad prevalece sobre esta herramienta (Ley 1581 de 2012).</p></div>
+      </div>
+    </section>
+
+    <section id="v-plantillas" class="view">
+      <h1>Plantillas de instrucciones</h1>
+      <p class="sub">Llena los campos y copia la instrucción lista para usar.</p>
+      <div class="grid g2" id="plList"></div>
+    </section>
+
+    <section id="v-checklist" class="view">
+      <h1>Checklist antes de usar una respuesta de IA</h1>
+      <p class="sub">Marca cada punto. Si alguno queda sin marcar, la respuesta no está lista para tu proyecto.</p>
+      <div class="card" id="chkList"></div>
+      <div id="chkFb"></div>
+    </section>
+
+    <section id="v-constancia" class="view">
+      <h1>Constancia de buen uso responsable</h1>
+      <p class="sub">Se habilita al completar el módulo de uso seguro y el laboratorio de verificación.</p>
+      <div id="certBox"></div>
+    </section>
+
+    <section id="v-uni" class="view">
+      <h1>Vista institucional · Universidad Demo</h1>
+      <p class="sub">Lo que ve la facultad que paga la licencia: avance agregado, sin datos de casos.</p>
+      <div class="grid g3">
+        <div class="card"><div class="muted small">Judicantes activos</div><div class="kpi">42</div></div>
+        <div class="card"><div class="muted small">Ruta completada (promedio)</div><div class="kpi">58%</div></div>
+        <div class="card"><div class="muted small">Con constancia</div><div class="kpi">17</div></div>
+      </div>
+      <div class="card" style="margin-top:14px"><h2>Avance por módulo</h2><div id="uniBars"></div></div>
+    </section>
+
+    <section id="v-feedback" class="view">
+      <h1>Tu opinión</h1>
+      <p class="sub">Ayúdanos a mejorar el prototipo.</p>
+      <div class="card" style="max-width:560px">
+        <div class="small muted">¿Qué tan útil te parece JudicIA?</div>
+        <div class="stars" id="stars"></div>
+        <label class="small muted">¿Qué cambiarías?</label>
+        <textarea id="fbTxt" style="min-height:80px"></textarea>
+        <button class="btn" style="margin-top:10px" onclick="toast('¡Gracias! Tu opinión quedó registrada en esta sesión.')">Enviar</button>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const st={lab:false,leccion:false,nivel:'básico'};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function go(v){
+  $('#s-login').classList.add('hidden');$('#s-app').classList.remove('hidden');
+  document.querySelectorAll('.view').forEach(e=>e.classList.add('hidden'));
+  $('#v-'+v).classList.remove('hidden');
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  if(v==='constancia')renderCert();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+
+/* Diagnóstico */
+const dq=[
+ {q:'¿Con qué frecuencia usas IA en la judicatura?',o:['Nunca o rara vez','Semanal','Diaria']},
+ {q:'Una IA te da una sentencia que no conoces. ¿Qué haces?',o:['La uso si suena bien','La busco en la relatoría oficial','Le pregunto a la IA si es real']},
+ {q:'¿Qué tarea quieres mejorar primero?',o:['Redactar proyectos','Buscar y resumir','Usarla sin exponer datos']}
+];
+let di=0,dans=[];
+function renderDiag(){
+  if(di>=dq.length){
+    st.nivel = dans[1]===1 ? 'intermedio':'básico';
+    const foco=['redacción de proyectos','búsqueda y resúmenes','uso seguro de datos'][dans[2]];
+    $('#diagBox').innerHTML=`<h2>Tu ruta está lista ✅</h2><p>Nivel <b>${st.nivel}</b> · Enfoque en <b>${foco}</b> y verificación de fuentes.</p><p class="small muted">Meta sugerida: 60 minutos por semana en sesiones de 10 a 15 minutos.</p><button class="btn" onclick="go('panel')">Ir a mi panel</button>`;
+    $('#rutaTxt').textContent=`Tu ruta: Nivel ${st.nivel} · Enfoque en ${foco} y verificación`;
+    return;
+  }
+  const d=dq[di];
+  $('#diagBox').innerHTML=`<div class="small muted">Pregunta ${di+1} de ${dq.length}</div><h2>${d.q}</h2>`+d.o.map((o,i)=>`<button class="opt" onclick="dans.push(${i});di++;renderDiag()">${o}</button>`).join('');
+}
+renderDiag();
+
+/* Ruta */
+const ruta=[['Qué es (y qué no es) la IA generativa','ok'],['Elegir la herramienta según la tarea','ok'],['Instrucciones claras: anatomía de un prompt','ok'],['Las alucinaciones y cómo detectarlas','now','leccion'],['Laboratorio: verificar citas y fuentes','next','verif'],['Uso seguro: datos personales y reserva','next','datos'],['Resumir expedientes ficticios','next'],['Proyectar providencias con apoyo de IA','next','simul'],['Comparar herramientas','next','matriz'],['Ruta avanzada: automatizar tareas repetitivas (pago)','lock']];
+$('#rutaList').innerHTML=ruta.map((r,i)=>{
+  const p={ok:'<span class="pill ok">Completado</span>',now:'<span class="pill">Siguiente</span>',next:'<span class="pill warn">Pendiente</span>',lock:'<span class="pill bad">🔒 Ruta avanzada</span>'}[r[1]];
+  return `<div class="row between" style="padding:9px 0;border-bottom:1px solid var(--line)"><div><b>${i+1}.</b> ${r[0]} <span class="small muted">· 10–15 min</span></div><div class="row">${p}${r[2]?`<button class="btn sm ghost" onclick="go('${r[2]}')">Abrir</button>`:''}</div></div>`}).join('');
+
+/* Lección + timer + quiz */
+let tsec=720,tint=null;
+function toggleTimer(){if(tint){clearInterval(tint);tint=null;$('#tbtn').textContent='Reanudar';return}
+ $('#tbtn').textContent='Pausar';tint=setInterval(()=>{tsec=Math.max(0,tsec-1);$('#timer').textContent=String(Math.floor(tsec/60)).padStart(2,'0')+':'+String(tsec%60).padStart(2,'0')},1000)}
+const quiz=[
+ {q:'¿Por qué una IA puede inventar una sentencia?',o:['Porque consulta bases desactualizadas','Porque genera texto plausible sin consultar una fuente oficial','Porque la sentencia fue derogada'],a:1},
+ {q:'¿Cuándo debes verificar una cita?',o:['Solo si parece rara','Siempre, antes de incluirla en el proyecto','Cuando el supervisor lo pida'],a:1},
+ {q:'¿Dónde se confirma una sentencia?',o:['Preguntándole a otra IA','En la relatoría oficial de la corporación','En un blog jurídico'],a:1}
+];
+let qok=0,qdone=0;
+$('#quiz').innerHTML=quiz.map((q,i)=>`<div style="margin-bottom:12px"><b>${i+1}. ${q.q}</b>${q.o.map((o,j)=>`<button class="opt" data-q="${i}" data-j="${j}">${o}</button>`).join('')}<div id="qfb${i}"></div></div>`).join('')+'<div id="qres"></div>';
+document.querySelectorAll('#quiz .opt').forEach(b=>b.onclick=()=>{
+  const i=+b.dataset.q,j=+b.dataset.j;if(b.parentNode.dataset.done)return;b.parentNode.dataset.done=1;
+  const ok=j===quiz[i].a;qdone++;if(ok)qok++;
+  b.classList.add(ok?'right':'wrong');
+  if(!ok)b.parentNode.querySelectorAll('.opt')[quiz[i].a].classList.add('right');
+  $('#qfb'+i).innerHTML=`<div class="fb ${ok?'ok':'bad'}">${ok?'¡Correcto!':'No exactamente. La respuesta correcta está en verde.'}</div>`;
+  if(qdone===quiz.length){st.leccion=true;$('#qres').innerHTML=`<div class="fb info">Resultado: ${qok} de 3. Lección completada (+12 min a tu meta semanal).</div>`;$('#minSem').textContent='37';$('#barSem').style.width='62%';$('#pctRuta').textContent='40';$('#barRuta').style.width='40%'}
+});
+
+/* Matriz */
+const mat=[
+ ['Buscar normativa y jurisprudencia','Buscador con IA que muestra fuentes (p. ej. Perplexity) o herramienta jurídica especializada','Ubicar fuentes candidatas y orientar la búsqueda','Puede citar mal o inventar; no reemplaza la relatoría','media'],
+ ['Leer y resumir documentos','Asistente conversacional (ChatGPT, Copilot, Gemini, Claude) o cuaderno de fuentes (NotebookLM)','Resúmenes de documentos ficticios o públicos','Puede omitir hechos; no subir expedientes con datos personales','alta'],
+ ['Redactar escritos y proyectos','Asistente conversacional','Mejorar redacción, estructura y tono','El criterio jurídico es del judicante','media'],
+ ['Verificar citas y fuentes','Relatorías oficiales + checklist JudicIA','Confirmar existencia y contenido de la cita','La IA no sirve para verificarse a sí misma','baja'],
+ ['Atender consultas y trámites','Asistente conversacional con plantillas','Borradores de respuestas generales','Revisar antes de enviar; no prometer resultados','media'],
+ ['Calificar demandas y cotejar bases','Hoja de cálculo con funciones de IA / Copilot','Detectar duplicados y ordenar información','Requiere revisión humana caso por caso','alta']
+];
+const tareas=['Todas',...mat.map(m=>m[0])];let ft='Todas';
+function renderMat(){
+  $('#filtros').innerHTML=tareas.map(t=>`<button class="btn sm ${t===ft?'':'ghost'}" onclick="ft='${t}';renderMat()">${t}</button>`).join('');
+  const rk={baja:'ok',media:'warn',alta:'bad'};
+  $('#matBody').innerHTML=mat.filter(m=>ft==='Todas'||m[0]===ft).map(m=>`<tr><td><b>${m[0]}</b></td><td>${m[1]}</td><td>${m[2]}</td><td>${m[3]}</td><td><span class="pill ${rk[m[4]]}">${m[4]}</span></td></tr>`).join('');
+}
+renderMat();
+
+/* Laboratorio de verificación */
+const citas=[
+ {t:'artículo 116 de la Constitución Política',real:true,fb:'Real: permite que, excepcionalmente, autoridades administrativas ejerzan funciones jurisdiccionales.'},
+ {t:'artículo 57 de la Ley 1480 de 2011',real:true,fb:'Real: el Estatuto del Consumidor asigna a la SFC funciones jurisdiccionales en asuntos de consumo financiero.'},
+ {t:'Sentencia C-1328 de 2009 de la Corte Suprema de Justicia',real:false,fb:'Inventada: las sentencias tipo «C» son de la Corte Constitucional, no de la Corte Suprema. Señal clásica de alucinación.'},
+ {t:'Ley 1328 de 2009',real:true,fb:'Real: régimen de protección al consumidor financiero.'},
+ {t:'Decreto 4401 de 2025 de la Superintendencia Financiera',real:false,fb:'Inventada: la SFC no expide decretos (los expide el Gobierno); emite circulares y resoluciones.'}
+];
+const cst=citas.map(()=>0);
+$('#iaResp').innerHTML=`La SFC ejerce funciones jurisdiccionales con fundamento en el <span class="cite" data-i="0">${citas[0].t}</span> y, de manera específica, en el <span class="cite" data-i="1">${citas[1].t}</span>. Así lo confirmó la <span class="cite" data-i="2">${citas[2].t}</span>. Estas funciones se complementan con la <span class="cite" data-i="3">${citas[3].t}</span> y fueron reglamentadas por el <span class="cite" data-i="4">${citas[4].t}</span>.`;
+document.querySelectorAll('.cite').forEach(c=>c.onclick=()=>{const i=+c.dataset.i;cst[i]=(cst[i]+1)%3;c.className='cite'+(cst[i]===1?' good':cst[i]===2?' flag':'')});
+function revisarCitas(){
+  let ok=0;
+  const html=citas.map((c,i)=>{const r=(cst[i]===1&&c.real)||(cst[i]===2&&!c.real);if(r)ok++;
+    document.querySelector(`.cite[data-i="${i}"]`).className='cite '+(c.real?'good':'badc');
+    return `<div class="fb ${r?'ok':'bad'}"><b>${r?'✔':'✘'} ${c.t}.</b> ${c.fb}</div>`}).join('');
+  if(ok>=4)st.lab=true;
+  $('#citaFb').innerHTML=`<div class="fb info" style="margin-top:14px"><b>Acertaste ${ok} de 5.</b> Lección: 2 de 5 citas eran inventadas y sonaban creíbles. Verifica siempre en la fuente oficial.</div>`+html;
+}
+
+/* Simulador */
+const rub=['Los hechos coinciden con el caso (14 meses, $38.500)','No hay normas ni sentencias sin verificar','Señala la prueba faltante (grabación)','El tono es formal y adecuado','La decisión final la toma el judicante, no la IA'];
+$('#rubrica').innerHTML=rub.map((r,i)=>`<label class="chk"><input type="checkbox" class="rb">${r}</label>`).join('')+'<button class="btn sm" style="margin-top:10px" onclick="evalRub()">Evaluar borrador</button>';
+function generar(){
+  const p=$('#prompt').value.toLowerCase();const cuida=p.includes('no cites')||p.includes('verific');
+  $('#borrador').textContent='CONSIDERACIONES\n\n1. La demandante alega el cobro no autorizado de un seguro de vida en su tarjeta de crédito durante catorce (14) meses, por valor mensual de $38.500.\n\n2. La entidad sostiene que existió aceptación telefónica; sin embargo, no aportó la grabación que la acredite, prueba que le correspondía.\n\n'+(cuida?'3. [Norma aplicable: VERIFICAR en fuente oficial antes de citar].':'3. De conformidad con la Sentencia T-777 de 2018, la carga de la prueba recae en la entidad. ⚠️')+'\n\n4. Se sugiere al despacho valorar la procedencia de la devolución de lo cobrado.';
+  toast(cuida?'Borrador generado. Tu instrucción pidió no inventar normas 👍':'Borrador generado. Ojo: incluye una cita sin verificar.');
+}
+function evalRub(){const n=[...document.querySelectorAll('.rb')].filter(x=>x.checked).length;
+  $('#rubFb').innerHTML=`<div class="fb ${n===5?'ok':'info'}">${n} de 5 criterios cumplidos. ${n===5?'Listo para revisión de tu supervisor.':'Ajusta el borrador o tu instrucción antes de usarlo.'}</div>`
+}
+
+/* Semáforo de datos */
+const rx=[[/\b\d{1,3}(\.\d{3}){2,3}\b|\b\d{7,10}\b/g,'Número de identificación'],/[\w.+-]+@[\w-]+\.[\w.]+/g,'Correo electrónico'],/\b3\d{2}\s?\d{3}\s?\d{4}\b/g,'Celular'],/\b\d{4}-\d{4}\b/g,'Número de obligación'],/(señor|señora|la consumidora|el consumidor)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(\s[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+){0,3})/g,'Nombre de persona'];
+function escape(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function analizar(){
+  let t=$('#txtDatos').value;const found={};
+  rx.forEach(([r,l])=>{t=t.replace(r,(m)=>{found[l]=(found[l]||0)+1;return '<mark class="pii">'+escape(m)+'</mark>'})});
+  t=escape(t).replace(/&lt;mark class=&quot;pii&quot;&gt;/g,'<mark class="pii">').replace(/&lt;\/mark&gt;/g,'</mark>');
+  const n=Object.values(found).reduce((a,b)=>a+b,0);
+  $('#semaforo').innerHTML=n===0?'<span class="pill ok">🟢 Verde: no se detectaron datos personales</span>':n<3?'<span class="pill warn">🟡 Amarillo: revisa antes de pegar</span>':'<span class="pill bad">🔴 Rojo: no pegues este texto en una IA</span>';
+  $('#semaforo').innerHTML+='<div class="small" style="margin-top:8px">'+Object.entries(found).map(([k,v])=>`${k}: ${v}`).join(' · ')+'</div>';
+  $('#datosOut').innerHTML=t;
+}
+function anonimizar(){
+  let t=$('#txtDatos').value;
+  rx.forEach(([r,l])=>{t=t.replace(r,(m)=>l==='Nombre de persona'?'[PERSONA]':'['+l.toUpperCase()+']')});
+  $('#txtDatos').value=t;analizar();toast('Texto anonimizado');
+}
+
+/* Plantillas */
+const pls=[
+ {n:'Resumir hechos de un expediente ficticio',v:['tipo de proceso','extensión máxima'],t:'Resume los hechos del siguiente documento de un {tipo de proceso} en máximo {extensión máxima} palabras, en orden cronológico. No agregues hechos que no estén en el texto y marca con [?] lo que no sea claro.'},
+ {n:'Proyectar consideraciones',v:['tema del caso','pruebas aportadas'],t:'Actúa como sustanciador. Redacta un borrador de consideraciones sobre {tema del caso}, teniendo en cuenta estas pruebas: {pruebas aportadas}. No cites normas ni sentencias que no te haya entregado; si necesitas una, escribe [VERIFICAR].'},
+ {n:'Mejorar la redacción',v:['tipo de escrito'],t:'Mejora la redacción de este {tipo de escrito} para que sea claro, formal y conciso. No cambies el sentido jurídico ni elimines datos. Muestra los cambios en una lista al final.'},
+ {n:'Buscar fuentes candidatas',v:['problema jurídico'],t:'Sugiere normas y líneas jurisprudenciales que podrían aplicar a: {problema jurídico}. Para cada una indica la corporación, el número y el año, y advierte que debo verificarlas en la relatoría oficial.'}
+];
+$('#plList').innerHTML=pls.map((p,i)=>`<div class="card"><h2>${p.n}</h2>${p.v.map(v=>`<input type="text" placeholder="${v}" data-p="${i}" data-v="${v}" style="margin-bottom:6px" oninput="fillPl(${i})">`).join('')}<div class="out" id="pl${i}">${p.t}</div><button class="btn sm" style="margin-top:8px" onclick="copyPl(${i})">Copiar instrucción</button></div>`).join('');
+function fillPl(i){let t=pls[i].t;document.querySelectorAll(`input[data-p="${i}"]`).forEach(x=>{if(x.value)t=t.replaceAll('{'+x.dataset.v+'}',x.value)});$('#pl'+i).textContent=t}
+function copyPl(i){try{navigator.clipboard.writeText($('#pl'+i).textContent)}catch(e){}toast('Instrucción copiada')}
+
+/* Checklist */
+const chk=['¿Revisé que no pegué datos personales ni información reservada?','¿Verifiqué cada norma y sentencia en la fuente oficial?','¿Los hechos de la respuesta coinciden con el expediente?','¿Entiendo y puedo explicar lo que dice la respuesta?','¿La decisión jurídica es mía y no de la IA?','¿Mi uso respeta la política de la entidad?'];
+$('#chkList').innerHTML=chk.map(c=>`<label class="chk"><input type="checkbox" class="ck" onchange="chkEval()">${c}</label>`).join('');
+function chkEval(){const n=[...document.querySelectorAll('.ck')].filter(x=>x.checked).length;$('#chkFb').innerHTML=`<div class="fb ${n===chk.length?'ok':'info'}">${n} de ${chk.length}. ${n===chk.length?'✅ La respuesta está lista para tu revisión final.':'Aún no uses la respuesta.'}</div>`}
+
+/* Constancia */
+function renderCert(){
+  if(!st.lab){$('#certBox').innerHTML=`<div class="card"><p>Te falta completar el <b>Laboratorio de verificación</b> con al menos 4 de 5 aciertos.</p><button class="btn" onclick="go('verif')">Ir al laboratorio</button></div>`;return}
+  const f=new Date().toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'});
+  $('#certBox').innerHTML=`<div class="cert"><div class="muted">JudicIA certifica que</div><div style="font-size:24px;font-weight:700;margin:8px 0">Judicante de prueba</div><div>completó el módulo de <b>uso responsable de la IA</b> y el <b>laboratorio de verificación de fuentes</b>.</div><div class="small muted" style="margin-top:14px">${f} · Constancia de prototipo, sin validez académica</div></div><button class="btn" style="margin-top:12px" onclick="toast('Descarga simulada en PDF')">Descargar PDF</button>`;
+}
+
+/* Universidad */
+const ub=[['Fundamentos',92],['Elegir herramienta',81],['Instrucciones',74],['Alucinaciones',63],['Verificación',55],['Uso seguro',49],['Resúmenes',38],['Providencias',31]];
+$('#uniBars').innerHTML=ub.map(u=>`<div style="margin:8px 0"><div class="row between small"><span>${u[0]}</span><span>${u[1]}%</span></div><div class="bar"><i style="width:${u[1]}%"></i></div></div>`).join('');
+
+/* Estrellas */
+$('#stars').innerHTML=[1,2,3,4,5].map(i=>`<button data-s="${i}">★</button>`).join('');
+document.querySelectorAll('#stars button').forEach(b=>b.onclick=()=>document.querySelectorAll('#stars button').forEach(x=>x.classList.toggle('on',+x.dataset.s<=+b.dataset.s)));
+
+/* Deep link para capturas: #vista */
+if(location.hash.length>1){const h=location.hash.slice(1);if(h!=='login'){go(h)}}
+</script>
+</body>
+</html>
