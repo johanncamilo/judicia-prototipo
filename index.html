@@ -120,12 +120,14 @@ mark.pii{background:#ffd6d1;color:#8a2318;border-radius:3px;padding:0 2px}
   <main class="main">
     <div class="banner">Prototipo de alta resolución · Entrega 2 EBT · los contenidos, citas y casos son ficticios y no se guardan datos.</div>
 
+    <!-- F2. Diagnóstico -->
     <section id="v-diag" class="view">
       <h1>Diagnóstico inicial</h1>
       <p class="sub">3 preguntas para armar tu ruta. Toma menos de 1 minuto.</p>
       <div class="card" id="diagBox"></div>
     </section>
 
+    <!-- F3. Panel -->
     <section id="v-panel" class="view">
       <h1>Hola, judicante 👋</h1>
       <p class="sub" id="rutaTxt">Tu ruta: Nivel básico · Enfoque en verificación y uso seguro</p>
@@ -138,6 +140,7 @@ mark.pii{background:#ffd6d1;color:#8a2318;border-radius:3px;padding:0 2px}
       <div class="card" id="rutaList"></div>
     </section>
 
+    <!-- F4. Micro-lección -->
     <section id="v-leccion" class="view">
       <div class="row between"><div><h1>Lección 4 · Las alucinaciones y cómo detectarlas</h1><p class="sub">Micro-lección de 12 minutos · Nivel básico</p></div><div class="card" style="padding:8px 14px">⏱️ <span class="timer" id="timer">12:00</span> <button class="btn sm ghost" id="tbtn" onclick="toggleTimer()">Iniciar</button></div></div>
       <div class="grid g2">
@@ -153,6 +156,7 @@ mark.pii{background:#ffd6d1;color:#8a2318;border-radius:3px;padding:0 2px}
       </div>
     </section>
 
+    <!-- F5. Matriz -->
     <section id="v-matriz" class="view">
       <h1>Matriz tarea → herramienta</h1>
       <p class="sub">Elige tu tarea y mira qué tipo de herramienta sirve, hasta dónde llega y qué riesgo tiene.</p>
@@ -160,6 +164,7 @@ mark.pii{background:#ffd6d1;color:#8a2318;border-radius:3px;padding:0 2px}
       <div class="card" style="padding:0;overflow:auto"><table><thead><tr><th>Tarea</th><th>Tipo de herramienta</th><th>Sirve para</th><th>Límite</th><th>Riesgo</th></tr></thead><tbody id="matBody"></tbody></table></div>
     </section>
 
+    <!-- F6. Laboratorio de verificación -->
     <section id="v-verif" class="view">
       <h1>Laboratorio de verificación</h1>
       <p class="sub">Una IA respondió esta consulta de un caso ficticio. Haz clic en cada cita y clasifícala. Luego revisa.</p>
@@ -171,6 +176,7 @@ mark.pii{background:#ffd6d1;color:#8a2318;border-radius:3px;padding:0 2px}
       </div>
     </section>
 
+    <!-- F7. Simulador -->
     <section id="v-simul" class="view">
       <h1>Simulador de proyección de providencia</h1>
       <p class="sub">Caso ficticio. Escribe la instrucción para la IA, genera un borrador simulado y evalúalo con la rúbrica.</p>
@@ -192,6 +198,7 @@ mark.pii{background:#ffd6d1;color:#8a2318;border-radius:3px;padding:0 2px}
       </div>
     </section>
 
+    <!-- F8. Semáforo de datos -->
     <section id="v-datos" class="view">
       <h1>Semáforo de datos sensibles</h1>
       <p class="sub">Antes de pegar un texto en una IA, revísalo aquí. Se analiza solo en tu navegador; no se envía a ningún lado.</p>
@@ -204,12 +211,14 @@ mark.pii{background:#ffd6d1;color:#8a2318;border-radius:3px;padding:0 2px}
       </div>
     </section>
 
+    <!-- F9. Plantillas -->
     <section id="v-plantillas" class="view">
       <h1>Plantillas de instrucciones</h1>
       <p class="sub">Llena los campos y copia la instrucción lista para usar.</p>
       <div class="grid g2" id="plList"></div>
     </section>
 
+    <!-- F10. Checklist -->
     <section id="v-checklist" class="view">
       <h1>Checklist antes de usar una respuesta de IA</h1>
       <p class="sub">Marca cada punto. Si alguno queda sin marcar, la respuesta no está lista para tu proyecto.</p>
@@ -217,12 +226,14 @@ mark.pii{background:#ffd6d1;color:#8a2318;border-radius:3px;padding:0 2px}
       <div id="chkFb"></div>
     </section>
 
+    <!-- F11. Constancia -->
     <section id="v-constancia" class="view">
       <h1>Constancia de buen uso responsable</h1>
       <p class="sub">Se habilita al completar el módulo de uso seguro y el laboratorio de verificación.</p>
       <div id="certBox"></div>
     </section>
 
+    <!-- F12. Vista universidad -->
     <section id="v-uni" class="view">
       <h1>Vista institucional · Universidad Demo</h1>
       <p class="sub">Lo que ve la facultad que paga la licencia: avance agregado, sin datos de casos.</p>
@@ -234,6 +245,7 @@ mark.pii{background:#ffd6d1;color:#8a2318;border-radius:3px;padding:0 2px}
       <div class="card" style="margin-top:14px"><h2>Avance por módulo</h2><div id="uniBars"></div></div>
     </section>
 
+    <!-- F13. Feedback -->
     <section id="v-feedback" class="view">
       <h1>Tu opinión</h1>
       <p class="sub">Ayúdanos a mejorar el prototipo.</p>
@@ -355,16 +367,15 @@ function generar(){
   toast(cuida?'Borrador generado. Tu instrucción pidió no inventar normas 👍':'Borrador generado. Ojo: incluye una cita sin verificar.');
 }
 function evalRub(){const n=[...document.querySelectorAll('.rb')].filter(x=>x.checked).length;
-  $('#rubFb').innerHTML=`<div class="fb ${n===5?'ok':'info'}">${n} de 5 criterios cumplidos. ${n===5?'Listo para revisión de tu supervisor.':'Ajusta el borrador o tu instrucción antes de usarlo.'}</div>`
-}
+  $('#rubFb').innerHTML=`<div class="fb ${n===5?'ok':'info'}">${n} de 5 criterios cumplidos. ${n===5?'Listo para revisión de tu supervisor.':'Ajusta el borrador o tu instrucción antes de usarlo.'}</div>`}
 
 /* Semáforo de datos */
-const rx=[[/\b\d{1,3}(\.\d{3}){2,3}\b|\b\d{7,10}\b/g,'Número de identificación'],/[\w.+-]+@[\w-]+\.[\w.]+/g,'Correo electrónico'],/\b3\d{2}\s?\d{3}\s?\d{4}\b/g,'Celular'],/\b\d{4}-\d{4}\b/g,'Número de obligación'],/(señor|señora|la consumidora|el consumidor)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(\s[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+){0,3})/g,'Nombre de persona'];
+const rx=[[/\b\d{1,3}(\.\d{3}){2,3}\b|\b\d{7,10}\b/g,'Número de identificación'],[/[\w.+-]+@[\w-]+\.[\w.]+/g,'Correo electrónico'],[/\b3\d{2}\s?\d{3}\s?\d{4}\b/g,'Celular'],[/\b\d{4}-\d{4}\b/g,'Número de obligación'],[/(señor|señora|la consumidora|el consumidor)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(\s[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+){0,3})/g,'Nombre de persona']];
 function escape(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
 function analizar(){
-  let t=$('#txtDatos').value;const found={};
-  rx.forEach(([r,l])=>{t=t.replace(r,(m)=>{found[l]=(found[l]||0)+1;return '<mark class="pii">'+escape(m)+'</mark>'})});
-  t=escape(t).replace(/&lt;mark class=&quot;pii&quot;&gt;/g,'<mark class="pii">').replace(/&lt;\/mark&gt;/g,'</mark>');
+  let t=escape($('#txtDatos').value);const found={};
+  rx.forEach(([r,l])=>{t=t.replace(r,(m,...g)=>{found[l]=(found[l]||0)+1;
+    if(l==='Nombre de persona')return g[0]+' <mark class="pii">'+g[1]+'</mark>';return '<mark class="pii">'+m+'</mark>'})});
   const n=Object.values(found).reduce((a,b)=>a+b,0);
   $('#semaforo').innerHTML=n===0?'<span class="pill ok">🟢 Verde: no se detectaron datos personales</span>':n<3?'<span class="pill warn">🟡 Amarillo: revisa antes de pegar</span>':'<span class="pill bad">🔴 Rojo: no pegues este texto en una IA</span>';
   $('#semaforo').innerHTML+='<div class="small" style="margin-top:8px">'+Object.entries(found).map(([k,v])=>`${k}: ${v}`).join(' · ')+'</div>';
@@ -372,7 +383,7 @@ function analizar(){
 }
 function anonimizar(){
   let t=$('#txtDatos').value;
-  rx.forEach(([r,l])=>{t=t.replace(r,(m)=>l==='Nombre de persona'?'[PERSONA]':'['+l.toUpperCase()+']')});
+  rx.forEach(([r,l])=>{t=t.replace(r,(m,...g)=>l==='Nombre de persona'?g[0]+' [PERSONA]':'['+l.toUpperCase()+']')});
   $('#txtDatos').value=t;analizar();toast('Texto anonimizado');
 }
 
